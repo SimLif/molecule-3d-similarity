@@ -119,6 +119,8 @@ venv.bak/
 .idea/
 
 /demo-data/
+/dude-acpc/
+/dude/
 *.gz
 *.csv
 *.bz2
