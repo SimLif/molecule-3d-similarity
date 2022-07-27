@@ -2,7 +2,7 @@
 Author: haoqiang haoqiang@mindrank.ai
 Date: 2022-07-13 14:22:18
 LastEditors: haoqiang haoqiang@mindrank.ai
-LastEditTime: 2022-07-15 10:36:26
+LastEditTime: 2022-07-27 02:31:51
 FilePath: /work-home/molecule-3d-similarity/utils/similarity.py
 Description: Investigated methods for calculating the similarity of molecular 3D structures
 
@@ -22,7 +22,7 @@ from rdkit.DataStructs import TanimotoSimilarity, TverskySimilarity
 from rdkit.Chem.FeatMaps import FeatMaps
 from oddt.shape import usr, usr_cat, electroshape, usr_similarity
 
-from utils.functions import calc_SC_score, calc_SC_score_plus, calc_SC_score_tversky
+from utils.functions import calc_SC_score, calc_SC_score_plus, calc_SC_score_tanimoto, calc_SC_score_tversky
 
 
 '''
@@ -243,7 +243,7 @@ def rdkit_sc_score(query_mol_list, ref_mol):
 
 
 
-def rdkit_sc_score_plus(query_mol_list, ref_mol):
+def rdkit_sc_score_tanimoto(query_mol_list, ref_mol):
     fdefName = os.path.join(RDConfig.RDDataDir, 'BaseFeatures.fdef')    
     fdef = AllChem.BuildFeatureFactory(fdefName)
     fmParams = {}
@@ -255,7 +255,7 @@ def rdkit_sc_score_plus(query_mol_list, ref_mol):
     
     score_list = []
     for query_mol in query_mol_list:
-        score = calc_SC_score_plus(
+        score = calc_SC_score_tanimoto(
             query_mol=query_mol,
             ref_mol=ref_mol,
             fdef=fdef,
