@@ -2,7 +2,7 @@
  * @Author: haoqiang haoqiang@mindrank.ai
  * @Date: 2022-07-19 03:41:19
  * @LastEditors: haoqiang haoqiang@mindrank.ai
- * @LastEditTime: 2022-07-19 06:56:48
+ * @LastEditTime: 2022-07-29 03:22:30
  * @FilePath: /work-home/molecule-3d-similarity/README.md
  * @Description: 
  * 
@@ -38,9 +38,10 @@
 ---
 1. Install [Opam](https://opam.ocaml.org/doc/Install.html)
     ```shell
-    sudo add-apt-repository ppa:avsm/ppa
+    sudo apt install software-properties-common
+    sudo add-apt-repository ppa:avsm/ppa # may get message that `ERROR: '~avsm' user or team does not exist`, please try again
     sudo apt update
-    sudo apt install gnuplot-x11 autoconf opam 
+    sudo apt install gnuplot-x11 autoconf opam make gcc patch
     ```
 2. Initialization Opam
     ```shell
@@ -49,5 +50,14 @@
     ```
 3. Install ACPC
     ```shell
-    opam install ACPC
+    opam install ACPC # try until prompt change from `Processing  1/1: [default: http]` to `Processing  1/1`:
     ```
+
+
+# Question
+1. sudo: add-apt-repository: command not found
+    https://linuxconfig.org/sudo-apt-add-repository-command-not-found
+    > sudo apt install software-properties-common
+
+2. 
+    

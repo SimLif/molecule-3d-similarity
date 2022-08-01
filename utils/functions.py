@@ -2,7 +2,7 @@
 Author: haoqiang haoqiang@mindrank.ai
 Date: 2022-07-13 09:53:29
 LastEditors: haoqiang haoqiang@mindrank.ai
-LastEditTime: 2022-07-15 10:35:46
+LastEditTime: 2022-07-29 09:11:44
 FilePath: /work-home/molecule-3d-similarity/utils/functions.py
 Description: some useful toolkits for molecule
 
@@ -19,6 +19,7 @@ from rdkit.Chem import AllChem, rdShapeHelpers, Get3DDistanceMatrix, TorsionFing
 from rdkit.Chem.Pharm2D import Gobbi_Pharm2D, Generate
 from rdkit.DataStructs import TanimotoSimilarity, TverskySimilarity
 from rdkit.Chem.FeatMaps import FeatMaps
+from espsim import GetEspSim
 
 
 '''
@@ -53,7 +54,7 @@ param {*} file
 param {*} sanitize
 return {*}
 '''
-def Mol2MolSupplier(file=None ,sanitize=True, removeHs=True):
+def Mol2MolSupplier(file=None ,sanitize=True, removeHs=False):
     mols=[]
     with open(file, 'r') as f:
         doc=[line for line in f.readlines()]
@@ -147,7 +148,7 @@ param {*} keep
 param {*} fmParams
 return {*}
 '''
-def calc_SC_score_plus(query_mol, ref_mol, fdef, keep, fmParams):
+def calc_SC_score_tanimoto(query_mol, ref_mol, fdef, keep, fmParams):
     # _ = rdMolAlign.GetCrippenO3A(query_mol, ref_mol).Align()
     fm_score = get_FeatureMapScore(query_mol, ref_mol, fdef, keep, fmParams)
 
@@ -180,3 +181,26 @@ def calc_SC_score_tversky(query_mol, ref_mol, fdef, keep, fmParams, alpha=0.7, b
     SC_RDKit_score = 0.5 * fm_score + 0.5 * tversky_index
 
     return SC_RDKit_score
+
+def MolToSpecialFormatFile(mols, save_path):
+    _sdf_path = save_path.split('.')[0]+'.sdf'
+    with Chem.SDWriter(_sdf_path) as w:
+        for m in mols:
+            w.write(m)
+    os.system(f'obabel {_sdf_path} -O {save_path}')
+    os.system(f'rm -f {_sdf_path}')
+
+
+def acpc_pre_parse(mol_path, bin_path):
+    os.system(f'acpc_codec -i {mol_path} -o {bin_path}')
+
+
+def get_esp(prbMol,refMol,i,j,partialCharges,prbCharge=None,refCharge=None,renormalize = True,metric=True):
+    try:
+        if partialCharges=='ml':
+            esp=GetEspSim(prbMol,refMol,i,j,prbCharge=prbCharge,refCharge=refCharge,renormalize = renormalize,metric = metric)
+        else:
+            esp=GetEspSim(prbMol,refMol,i,j,partialCharges = partialCharges,renormalize = renormalize,metric = metric)
+    except:
+        esp=0
+    return esp

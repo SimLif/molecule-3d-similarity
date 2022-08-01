@@ -107,7 +107,32 @@ def enrichment_factor(y_true, y_score, percentage=1, pos_label=None, kind='fold'
     return out
 
 
-def roc_log_auc(y_true, y_score, pos_label=None, ascending_score=True,
+'''
+description: Because EF values are easily influenced by the ratio of the number 
+of actives to decoys in the dataset, we used the relative EF (i.e. HR) to 
+eliminate this effect. https://doi.org/10.1093/bib/bbab231
+param {*} y_true
+param {*} y_score
+param {*} percentage
+param {*} pos_label
+return {*}
+'''
+def relative_ef(y_true, y_score, percentage=1, pos_label=None):
+    if pos_label is None:
+        pos_label = 1
+    labels = y_true == pos_label
+    assert labels.sum() > 0, "There are no correct predicions. Double-check the pos_label"
+    assert len(labels) > 0, "Sample size must be greater than 0"
+    
+    # calculate fraction of positve labels
+    n_perc = int(ceil(percentage / 100. * len(labels)))
+    n_a = labels[:n_perc].sum()
+    n_max = n_perc if labels.sum() > n_perc else labels.sum()
+
+    return n_a / n_max
+
+
+def roc_log_auc(y_true, y_score, pos_label=None, ascending_score=False,
                 log_min=0.001, log_max=1.):
     """Computes area under semi-log ROC.
 
@@ -317,8 +342,14 @@ def calculate_metrics(y_lable, y_score):
     metrics_list['log_acu'] = roc_log_auc(y_true=y_lable, y_score=y_score)
     metrics_list['adjusted_log_auc'] = metrics_list['log_acu'] - 0.1446
     metrics_list['EF^0.5%'] = enrichment_factor(y_true=y_lable, y_score=y_score, percentage=0.5)
+    metrics_list['EF^1%'] = enrichment_factor(y_true=y_lable, y_score=y_score, percentage=1)
     metrics_list['EF^2%'] = enrichment_factor(y_true=y_lable, y_score=y_score, percentage=2)
+    metrics_list['EF^5%'] = enrichment_factor(y_true=y_lable, y_score=y_score, percentage=5)
     metrics_list['EF^8%'] = enrichment_factor(y_true=y_lable, y_score=y_score, percentage=8)
+    metrics_list['EF^10%'] = enrichment_factor(y_true=y_lable, y_score=y_score, percentage=10)
+    metrics_list['HR^1%'] = relative_ef(y_true=y_lable, y_score=y_score, percentage=1)
+    metrics_list['HR^5%'] = relative_ef(y_true=y_lable, y_score=y_score, percentage=5)
+    metrics_list['HR^10%'] = relative_ef(y_true=y_lable, y_score=y_score, percentage=10)
     metrics_list['BEDROC(alpha=20.0)'] = bedroc(y_true=y_lable, y_score=y_score, alpha=20.0)
     metrics_list['BEDROC(alpha=80.5)'] = bedroc(y_true=y_lable, y_score=y_score, alpha=80.5)
     metrics_list['BEDROC(alpha=321.9)'] = bedroc(y_true=y_lable, y_score=y_score, alpha=321.9)
