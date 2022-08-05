@@ -60,7 +60,7 @@
 
 ## 2.3 <span id='SHAFTS'>SHAFTS</span>
 ---
-已下载在molecule-3d-similarity/softwares/目录下
+已下载在molecule-3d-similarity/softwares/目录下, 如果出现`./Cynthia: No such file or directory`错误，可以尝试安装`sudo apt-get install lib32stdc++6`（[参考](https://haow.ca/blog//2017/No-such-file/)）。
 
 ## 2.4 <span id='SimG'>SimG</span>
 ---
